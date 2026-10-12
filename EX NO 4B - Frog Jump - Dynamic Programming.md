@@ -1,25 +1,20 @@
 
-# EX 4B Frog Jump - Dynamic Programming.
+# EX 4C Coin Change Problem - Dynamic Programming.
 ## AIM:
 To write a Java program to for given constraints.
-A Frog Jump 1 or 2 steps at a time.
-Problem Statement:
+You are given an integer array coins representing coins of different denominations and an integer amount representing a total amount of money.
 
-A frog is at the bottom of the stairs with n steps. It can jump either 1 or 2 steps at a time. Write a program to find the number of distinct ways the frog can reach the top (n-th step).
+Return the fewest number of coins that you need to make up that amount. If that amount of money cannot be made up by any combination of the coins, return -1.
 
-Input Format:
-
-A single integer n (1 ≤ n ≤ 45) – number of steps.
- Output Format:
-
-A single integer – number of distinct ways to reach step n.
+You may assume that you have an infinite number of each kind of coin.
 
 ## Algorithm
-1. Start the program and read the integer `n` (number of steps) from the user.
-2. If `n` equals 1, return 1; if `n` equals 2, return 2.
-3. Initialize two variables: `first = 1` and `second = 2` to represent ways to reach steps 1 and 2.
-4. Use a loop from 3 to `n`, updating `current = first + second`, then shift values (`first = second`, `second = current`).
-5. After the loop ends, print the value of `current` as the total number of ways the frog can reach step `n`.
+1. Read the coin denominations and target amount as input.
+2. Initialize a `dp` array of size `amount + 1` with a large value (`amount + 1`), and set `dp[0] = 0`.
+3. For each amount `i` from `1` to `amount`, iterate through all coin values.
+4. If `i - coin >= 0`, update `dp[i] = min(dp[i], dp[i - coin] + 1)` to track the minimum coins needed.
+5. After filling the `dp` array, print `dp[amount]` if it’s valid; otherwise, print `-1` if the amount cannot be formed. 
+
 ## Program:
 ```
 /*
@@ -27,32 +22,45 @@ Program to implement Reverse a String
 Developed by: N Preethika
 Register Number:  212223040130
 */
-import java.util.Scanner;
+import java.util.*;
 
-public class FrogJump {
-    public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        int n = scanner.nextInt();
-        scanner.close();
+public class Solution {
+    public int coinChange(int[] coins, int amount) {
+        int max = amount + 1;
+        int[] dp = new int[amount + 1];
+        Arrays.fill(dp, max);  // Initialize with a value greater than any possible answer
+        dp[0] = 0;  // Base case: 0 coins needed to make amount 0
 
-        System.out.println(countWays(n));
-    }
-
-    public static int countWays(int n) {
-        if (n == 1) return 1;
-        if (n == 2) return 2;
-
-        int first = 1; // ways to reach step 1
-        int second = 2; // ways to reach step 2
-        int current = 0;
-
-        for (int i = 3; i <= n; i++) {
-            current = first + second; // ways to reach current step
-            first = second;
-            second = current;
+        for (int i = 1; i <= amount; i++) {
+            for (int coin : coins) {
+                if (i - coin >= 0) {
+                    dp[i] = Math.min(dp[i], dp[i - coin] + 1);
+                }
+            }
         }
 
-        return current;
+        return dp[amount] > amount ? -1 : dp[amount];
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        Solution solution = new Solution();
+
+        String coinsLine = scanner.nextLine(); 
+        String amountLine = scanner.nextLine();
+
+        coinsLine = coinsLine.replaceAll("[^0-9,]", ""); 
+        String[] coinsStr = coinsLine.split(",");
+        int[] coins = new int[coinsStr.length];
+        for (int i = 0; i < coinsStr.length; i++) {
+            coins[i] = Integer.parseInt(coinsStr[i]);
+        }
+
+        int amount = Integer.parseInt(amountLine.replaceAll("[^0-9]", ""));
+        int result = solution.coinChange(coins, amount);
+        System.out.println(result);
+
+        scanner.close();
     }
 }
 
@@ -60,8 +68,7 @@ public class FrogJump {
 
 ## Output:
 
-<img width="354" height="194" alt="image" src="https://github.com/user-attachments/assets/2b75146d-a44a-4200-b18c-384d3fb068af" />
-
+<img width="381" height="233" alt="image" src="https://github.com/user-attachments/assets/cbc5ddb9-e5fa-4287-bd2d-dfa5bad2bec3" />
 
 ## Result:
 The program successfully implemented and the expected output is verified.
